@@ -32,21 +32,53 @@ $(function() {
          * and that the URL is not empty.
          */
 
+        it('has a defined URL that is not empty', function() {
+
+            for(var i = 0; i < allFeeds.length; i++) {
+                // test to see that url in a defined property in the feed
+                expect(allFeeds[i].url).toBeDefined();
+                // test to see that the URL is not empty
+                expect(allFeeds[i].url).not.toBe('');
+            }
+
+         });
+
 
         /* TODO: Write a test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
+
+        it('has a defined name that is not empty', function() {
+
+            for(var i = 0; i < allFeeds.length; i++) {
+                // test to see that name in a defined property in the feed
+                expect(allFeeds[i].name).toBeDefined();
+                // test to see that the name is not empty
+                expect(allFeeds[i].name).not.toBe('');
+            }
+
+         });
+
     });
 
 
     /* TODO: Write a new test suite named "The menu" */
+
+    describe('The menu', function() {
 
         /* TODO: Write a test that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          */
+        it('is hidden by default', function() {
+            // test to see that body element has class of "menu-hidden"
+            // additional classes could be added in the future
+            // so use "contains"
+            expect(document.body.classList.contains('menu-hidden')).toBe(true);
+
+        });
 
          /* TODO: Write a test that ensures the menu changes
           * visibility when the menu icon is clicked. This test
@@ -54,7 +86,24 @@ $(function() {
           * clicked and does it hide when clicked again.
           */
 
+        it('is visible when the icon is clicked', function() {
+            // test to see that menu displays when clicked
+            $('.menu-icon-link').trigger('click');
+            expect(document.body.classList.contains('menu-hidden')).toBe(false);
+            // test to see that menu hides when clicked again
+            $('.menu-icon-link').trigger('click');
+            expect(document.body.classList.contains('menu-hidden')).toBe(true);
+
+        });
+
+    });
+
+
+
+
     /* TODO: Write a new test suite named "Initial Entries" */
+
+    describe('Initial Entries', function() {
 
         /* TODO: Write a test that ensures when the loadFeed
          * function is called and completes its work, there is at least
@@ -63,10 +112,69 @@ $(function() {
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
 
+        beforeEach(function(done) { //pass done to callback
+
+            $('.feed').empty();
+
+            loadFeed(0, function() {
+                container = $('.feed');
+                entry = $('.entry');
+                done(); //call done function
+            });
+        });
+
+
+        it('should be at least one', function(done) {
+
+            expect(container[0].contains(entry[0])).toBe(true);
+            done();
+
+        });
+
+    });
+
+
+
     /* TODO: Write a new test suite named "New Feed Selection" */
+
+    describe('New Feed Selection', function() {
 
         /* TODO: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
+
+        beforeEach(function(done) { //pass done to callback
+
+            $('.feed').empty();
+            previousEntries = [];
+
+            loadFeed((allFeeds.length - 1), function() {
+
+                for(var i = 0; i < (allFeeds.length - 1); i++) {
+                    // array for all entries but the newest one
+                    previousEntries.push(allFeeds[i].url);
+
+                }
+
+                newEntry = allFeeds[allFeeds.length - 1].url;
+
+                done(); //call done function
+            });
+
+
+        });
+
+
+        it('should show new content', function(done) {
+            //compares new entry to all other entries
+            previousEntries.forEach(function(entry) {
+                expect(newEntry).not.toBe(entry);
+            });
+
+            done();
+
+        });
+
+    });
 }());
